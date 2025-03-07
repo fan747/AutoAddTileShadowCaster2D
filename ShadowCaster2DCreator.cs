@@ -1,11 +1,8 @@
 using System.Linq;
-using System.Numerics;
 using System.Reflection;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using static UnityEngine.UI.Image;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
@@ -73,7 +70,7 @@ public class ShadowCaster2DCreator : MonoBehaviour
             int prevIndex = (i == 0) ? vertices.Length - 1 : i - 1;
             int nextIndex = (i + 1) % vertices.Length;
 
-            Vector2 normal = ComputeEdgeNormal(
+            Vector2 normal = CalculateVertexNormal(
                 vertices[prevIndex],
                 vertices[i],
                 vertices[nextIndex]
@@ -85,7 +82,7 @@ public class ShadowCaster2DCreator : MonoBehaviour
         return insertedVertices;
     }
 
-    public Vector2 ComputeEdgeNormal(Vector2 previousVertex, Vector2 currentVertex, Vector2 nextVertex)
+    public Vector2 CalculateVertexNormal(Vector2 previousVertex, Vector2 currentVertex, Vector2 nextVertex)
     {
         Vector2 edge1 = currentVertex - previousVertex;
         Vector2 edge2 = nextVertex - currentVertex;
@@ -97,19 +94,8 @@ public class ShadowCaster2DCreator : MonoBehaviour
 
         return averageNormal;
     }
-    private bool IsOnZero(float x) => x > -0.1 && x < 0.1;
 
-    private Vector2 ComputeCenter(Vector2[] pathVertices)
-    {
-		Vector2 sum = Vector2.zero;
-        foreach (var pathVertex in pathVertices)
-        {
-            sum += pathVertex;
-        }
-		return sum / pathVertices.Length;
-    }
-
-	public void DestroyOldShadowCasters()
+    public void DestroyOldShadowCasters()
 	{
         var tempList = transform.Cast<Transform>().ToList();
 		foreach (var child in tempList)
